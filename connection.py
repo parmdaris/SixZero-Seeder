@@ -1,6 +1,6 @@
 import psycopg2 as pg, math, os
 from datetime import datetime
-from psycopg2.extras import execute_values
+import psycopg2.extras
 
 # DB_ADDR="********"
 # DB_PORT="********"
@@ -23,14 +23,53 @@ def saveGame(gamedata):
     conn.autocommit = True
 
     try:
-        sql = """INSERT INTO "sixzero-seeder".games (gameid, type, qtyno, seed, date_generated) VALUES (%s, %s, %s, %s, %s)"""
-        cursor.execute(sql, ())
+        sql = """INSERT INTO "sixzero-seeder".games (type, qtyno, seed) VALUES (%s, %s, %s) RETURNING gameid"""
+        cursor.execute(sql, (gamedata.get("type"), gamedata.get("qtyno"), gamedata.get("seed")))
+        gameid = cursor.fetchone()[0]
+        cursor.close()
+
+        return {
+                "message": "Jogo salvo com sucesso!",
+                "status": 0,
+                "gameid": gameid
+            }
         
     finally:
-        cursor.close()
         conn.close()
 
-    return {
-        "message": "Jogo salvo com sucesso!",
-        "status": 0
-    }
+
+def getAllGames():
+    conn = get_connection()
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+
+    try:
+        sql = """SELECT 
+                    g.gameid, 
+                    g.type, 
+                    t.typename, 
+                    g.qtyno, 
+                    g.seed, 
+                    g.date_generated, 
+                    g.date_finished, 
+                    g.finished, 
+                    g.comments 
+                FROM "sixzero-seeder".games g 
+                INNER JOIN "sixzero-seeder".types t on g.type = t.typeid
+                ORDER BY g.gameid ASC
+                """
+        
+        cursor.execute(sql)
+        result = cursor.fetchall()
+        cursor.close()
+
+        return result
+
+    except:
+        return {
+            "message": "Erro na consulta!",
+            "status": 1,
+            "details": ""
+        }
+    
+    finally:
+        conn.close()

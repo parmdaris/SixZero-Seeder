@@ -20,7 +20,8 @@ def getAllGames():
         "numbers": [],
         "date_generated": "0000",
         "date_finished": "",
-        "finished": False
+        "finished": False,
+        "comments": ""
     }]
 
 @app.get("/getGame")
