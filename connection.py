@@ -100,7 +100,7 @@ def getAllGames():
             SELECT 
                 g.gameid,
                 g.type,
-                t.typename,
+                t."typeName",
                 g.qtyno,
                 g.seed,
                 g.date_generated,
@@ -109,14 +109,14 @@ def getAllGames():
                 g.comments,
                 ARRAY_AGG(n.number ORDER BY n.number) AS numbers
             FROM "sixzero-seeder".games g
-            INNER JOIN "sixzero-seeder".types t
-                ON g.type = t.typeid
+            INNER JOIN "sixzero-seeder".gametypes t
+                ON g.type = t."typeId"
             LEFT JOIN "sixzero-seeder".numbers n
                 ON n.gameid = g.gameid
             GROUP BY
                 g.gameid,
                 g.type,
-                t.typename,
+                t."typeName",
                 g.qtyno,
                 g.seed,
                 g.date_generated,
@@ -136,7 +136,7 @@ def getAllGames():
         conn.rollback()
 
         return {
-            "message": "Erro ao salvar jogo!",
+            "message": "Erro ao consultar jogos!",
             "status": 1,
             "details": str(e)
         }
