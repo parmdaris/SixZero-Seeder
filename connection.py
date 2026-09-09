@@ -64,14 +64,14 @@ def getTypes():
 
     try:
         sql = """ Select 
-        "typeId", 
-        "typeName", 
+        "type_id", 
+        "type_name", 
         qty_numbers, 
         minval, 
         maxval, 
         cost 
         FROM "sixzero-seeder".gametypes 
-        ORDER BY "typeId" ASC
+        ORDER BY "type_id" ASC
         """
 
         cursor.execute(sql)
@@ -100,7 +100,7 @@ def getAllGames():
             SELECT 
                 g.gameid,
                 g.type,
-                t."typeName",
+                gt.type_name,
                 g.qtyno,
                 g.seed,
                 g.date_generated,
@@ -109,14 +109,14 @@ def getAllGames():
                 g.comments,
                 ARRAY_AGG(n.number ORDER BY n.number) AS numbers
             FROM "sixzero-seeder".games g
-            INNER JOIN "sixzero-seeder".gametypes t
-                ON g.type = t."typeId"
+            INNER JOIN "sixzero-seeder".gametypes gt
+                ON g.type = gt."type_id"
             LEFT JOIN "sixzero-seeder".numbers n
                 ON n.gameid = g.gameid
             GROUP BY
                 g.gameid,
                 g.type,
-                t."typeName",
+                gt.type_name,
                 g.qtyno,
                 g.seed,
                 g.date_generated,
@@ -177,18 +177,18 @@ def newType(typeName, qty_numbers, minval, maxval, cost):
 
     try:
         sql = """INSERT INTO "sixzero-seeder".gametypes 
-                    ("typeName", qty_numbers, minval, maxval, cost) 
+                    ("type_name", qty_numbers, minval, maxval, cost) 
                     VALUES (%s, %s, %s, %s, %s)
-                    RETURNING "typeId"
+                    RETURNING "type_id"
             """
-        cursor.execute(sql, (typeName, qty_numbers, minval, maxval, cost))
-        typeId = cursor.fetchone()[0]
+        cursor.execute(sql, (typeName, qty_numbSers, minval, maxval, cost))
+        type_id = cursor.fetchone()[0]
         conn.commit()
 
         return {
             "message": "Sucesso ao gravar novo tipo!",
             "status": 0,
-            "typeId": typeId
+            "type_id": type_id
         }
 
     except Exception as e:
