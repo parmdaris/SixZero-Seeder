@@ -28,7 +28,7 @@ def saveGame(gamedata):
                     RETURNING gameid
             """
 
-        cursor.execute(sql, (gamedata.get("typeId"), gamedata.get("qtyno"), gamedata.get("seed"), gamedata.get("comments")))
+        cursor.execute(sql, (gamedata.get("type_id"), gamedata.get("qtyno"), gamedata.get("seed"), gamedata.get("comments")))
         gameid = cursor.fetchone()[0]
 
         sql_num = """INSERT INTO "sixzero-seeder".numbers

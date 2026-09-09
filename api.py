@@ -27,14 +27,14 @@ def getTypes():
 
 @app.post("/saveGame")
 def saveGame(
-    typeId: int = Query(description="ID do tipo de jogo"),
+    type_id: int = Query(description="ID do tipo de jogo"),
     qtyno: int = Query(description="Quantidade de Números"),
     seed: str = Query(description="Seed do jogo"),
     numbers: list[int] = Query(description="Números do jogo", min_length=1, max_length=30),
     comments: str = Query("", description="Comentários")
 ):
     gamedata = {
-        "typeId": typeId,
+        "type_id": typeId,
         "qtyno": qtyno,
         "seed": seed,
         "numbers": numbers,
